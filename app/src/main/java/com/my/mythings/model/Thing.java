@@ -1,4 +1,4 @@
-package com.my.mythings;
+package com.my.mythings.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,9 +6,9 @@ import android.os.Parcelable;
 /**
  * @author 文琳
  * @time 2020/6/16 17:26
- * @desc
+ * @desc 物品
  */
-class Thing implements Parcelable {
+public class Thing implements Parcelable {
     private int position;
     private String name;
     private String price;

@@ -1,4 +1,4 @@
-package com.my.mythings;
+package com.my.mythings.view;
 
 import android.animation.Animator;
 import android.view.LayoutInflater;
@@ -10,12 +10,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.my.mythings.R;
+import com.my.mythings.model.Thing;
+import com.my.mythings.xutil.InAnimation;
+
 import me.drakeet.multitype.ItemViewBinder;
 
 /**
  * @author 文琳
  * @time 2020/6/16 17:27
- * @desc
+ * @desc 物品的样式
  */
 class ThingBinder extends ItemViewBinder<Thing, ThingBinder.ThingHolder> {
 

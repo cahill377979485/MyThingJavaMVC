@@ -1,4 +1,4 @@
-package com.my.mythings;
+package com.my.mythings.xutil;
 
 import android.text.TextUtils;
 
@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by wenlin on 2017/8/17.
+ * @author 文琳
+ * @time 2020/6/18 17:00
+ * @desc 简单封装检查是否为空的工具类
  */
 public class Checker {
     public static boolean notNull(Object object) {

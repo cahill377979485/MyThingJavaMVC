@@ -1,4 +1,4 @@
-package com.my.mythings;
+package com.my.mythings.view;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +11,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.my.mythings.R;
+import com.my.mythings.model.Thing;
+import com.my.mythings.xutil.ToastUtils;
+import com.my.mythings.xutil.MyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rv;
     @BindView(R.id.cb_search)
     AppCompatCheckBox cbSearch;
+    @BindView(R.id.iv_clear)
+    ImageView ivClear;
 
     private Items items = new Items();
     private MultiTypeAdapter adapter;
@@ -59,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     updating = true;
                     updatePosition = thing.getPosition();
                     tvInput.setText("更新");
+                    dialog.dismiss();
                 }).setPositiveButton("取消", null)
                 .create().show()));
         rv.setLayoutManager(new GridLayoutManager(this, 1));
@@ -78,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                ivClear.setVisibility(s.toString().length() > 0 ? View.VISIBLE : View.INVISIBLE);
                 if (cbSearch.isChecked()) {
                     List<Thing> listResult = new ArrayList<>();
                     List<Thing> list = MyUtil.getThingList();
@@ -95,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
         refreshData();
     }
 
+    /**
+     * 刷新数据
+     */
     private void refreshData() {
         List<Thing> list = MyUtil.getThingList();
         MyUtil.setTotalText(tvTotal, items, adapter, list, "总价值");
@@ -102,9 +115,21 @@ public class MainActivity extends AppCompatActivity {
         rv.setItemViewCacheSize(list.size());
     }
 
+    /**
+     * 添加物品并保存
+     * @param str 输入的字符串
+     */
     private void addThing(String str) {
-        String[] arr = MyUtil.getNameAndPrice(str);
+        String[] arr = MyUtil.getNameAndPriceByRegex(str);
         List<Thing> list = MyUtil.getThingList();
+        //检查是否已存在同名物品
+        for (Thing t :
+                list) {
+            if (t.getName().equals(arr[0])) {
+                ToastUtils.getInstance().showError("已存在");
+                return;
+            }
+        }
         list.add(0, new Thing(0, arr[0], arr[1]));
         MyUtil.save(list);
         if (cbSearch.isChecked()) {
@@ -112,9 +137,12 @@ public class MainActivity extends AppCompatActivity {
         }
         refreshData();
         et.setText("");
-        ToastUtils.getInstance().showSuccess("添加成功");
     }
 
+    /**
+     * 删除物品
+     * @param name 物品名
+     */
     private void deleteThing(String name) {
         List<Thing> list = MyUtil.getThingList();
         if (items != null && items.size() > 0) {
@@ -128,14 +156,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+            MyUtil.save(list);
+            refreshData();
         }
-        MyUtil.save(list);
-        refreshData();
-        ToastUtils.getInstance().showSuccess("删除成功");
     }
 
+    /**
+     * 更新物品
+     * @param str 输入的字符串
+     */
     private void updateThing(String str) {
-        String[] arr = MyUtil.getNameAndPrice(str);
+        String[] arr = MyUtil.getNameAndPriceByRegex(str);
         List<Thing> list = MyUtil.getThingList();
         list.get(list.size() - 1 - updatePosition).setName(arr[0]);//因为是倒序所以这里要list.size-1-position
         list.get(list.size() - 1 - updatePosition).setPrice(arr[1]);
@@ -144,10 +175,9 @@ public class MainActivity extends AppCompatActivity {
         tvInput.setText("录入");
         updating = false;
         et.setText("");
-        ToastUtils.getInstance().showSuccess("更新成功");
     }
 
-    @OnClick({R.id.tv_input, R.id.cb_search})
+    @OnClick({R.id.tv_input, R.id.iv_clear, R.id.cb_search})
     void click(View view) {
         switch (view.getId()) {
             case R.id.tv_input: {
@@ -164,9 +194,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             }
+            case R.id.iv_clear:
+                et.setText("");
+                break;
             case R.id.cb_search: {
                 if (!cbSearch.isChecked()) {
-                    ToastUtils.getInstance().showInfo("结束搜索");
                     refreshData();
                 } else {
                     String str = et.getText().toString().trim();
@@ -175,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
                         refreshData();
                         return;
                     }
-                    ToastUtils.getInstance().showInfo("开始搜索");
                     et.setText(str);
                     et.setSelection(str.length());
                 }

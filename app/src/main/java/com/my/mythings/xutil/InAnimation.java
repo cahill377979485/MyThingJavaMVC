@@ -1,4 +1,4 @@
-package com.my.mythings;
+package com.my.mythings.xutil;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
@@ -7,7 +7,7 @@ import android.view.View;
 /**
  * @author 文琳
  * @time 2020/6/18 17:00
- * @desc
+ * @desc 物品条目显示动画，从中间向左右两边展开
  */
 public class InAnimation {
     private static final float DEFAULT_SCALE_FROM = .618f;

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
-    tools:context=".MainActivity">
+    tools:context=".view.MainActivity">
 
     <TextView
         android:id="@+id/tv_total"
@@ -23,7 +23,7 @@
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/cb_search"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:gravity="center"
         android:text="@string/real_time_search"
@@ -38,20 +38,35 @@
         android:background="#08333333"
         android:gravity="center_vertical"
         android:hint="@string/input_thing"
+        android:paddingStart="0dp"
+        android:paddingEnd="20dp"
         app:layout_constraintBottom_toBottomOf="@id/tv_input"
         app:layout_constraintEnd_toStartOf="@id/tv_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_input" />
 
+    <ImageView
+        android:id="@+id/iv_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_clear"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/et"
+        app:layout_constraintEnd_toEndOf="@id/et"
+        app:layout_constraintTop_toTopOf="@id/et"
+        tools:visibility="visible" />
+
     <TextView
         android:id="@+id/tv_input"
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
         android:background="#0f333333"
         android:gravity="center"
         android:text="@string/input"
         android:textColor="#333333"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/cb_search"
         app:layout_constraintTop_toBottomOf="@id/tv_total" />
 
     <androidx.recyclerview.widget.RecyclerView

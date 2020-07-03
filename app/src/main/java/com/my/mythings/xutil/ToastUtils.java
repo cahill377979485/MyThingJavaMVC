@@ -1,4 +1,4 @@
-package com.my.mythings;
+package com.my.mythings.xutil;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+
+import com.my.mythings.MyApplication;
+import com.my.mythings.R;
 
 /**
  * 带背景颜色和图标的简单单例吐司提示，当新的提示出现时旧的提示当即被替换

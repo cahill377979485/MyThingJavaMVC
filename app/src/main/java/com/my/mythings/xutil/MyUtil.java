@@ -1,4 +1,4 @@
-package com.my.mythings;
+package com.my.mythings.xutil;
 
 import android.graphics.Color;
 import android.widget.TextView;
@@ -11,10 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.google.gson.Gson;
+import com.my.mythings.model.Thing;
+import com.my.mythings.model.Things;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.drakeet.multitype.Items;
 import me.drakeet.multitype.MultiTypeAdapter;
@@ -22,7 +26,7 @@ import me.drakeet.multitype.MultiTypeAdapter;
 /**
  * @author 文琳
  * @time 2020/6/17 9:51
- * @desc
+ * @desc 封装一些常用的方法
  */
 public class MyUtil {
     private static final String DATA = "DATA";
@@ -96,19 +100,62 @@ public class MyUtil {
         helper.attachToRecyclerView(rv);
     }
 
+    /**
+     * 保存数据
+     *
+     * @param list 物品们
+     */
     public static void save(List<Thing> list) {
         SPUtils.getInstance().put(DATA, new Gson().toJson(new Things(list), Things.class));
     }
 
+    /**
+     * 获取物品列表
+     *
+     * @return 所求
+     */
     public static List<Thing> getThingList() {
         List<Thing> list = new ArrayList<>();
         String thingsStr = SPUtils.getInstance().getString(DATA);
-        if (thingsStr == null || thingsStr.length() < 1) return list;
+        if (thingsStr == null || thingsStr.length() <= 0) return list;
         Things things = new Gson().fromJson(thingsStr, Things.class);
         if (things == null) return list;
         return things.getList();
     }
 
+    /**
+     * 获取解析后的物品和价格所组成的数组
+     *
+     * @param str 输入的字符串
+     * @return 所求
+     */
+    public static String[] getNameAndPriceByRegex(String str) {
+        String[] arr = new String[2];
+        Pattern pattern = Pattern.compile("-?\\d*\\.?\\d*$");
+        Matcher matcher = pattern.matcher(str);
+        if (matcher.matches()) {
+            arr[0] = str.replace(matcher.group(), "");
+            arr[1] = matcher.group();
+        }
+        //价格只要是以.xx0 .x0 .0 .00结尾的都要做去除小数的处理
+        pattern = Pattern.compile("\\.\\d*(0+)$");
+        matcher = pattern.matcher(arr[1]);
+        if (matcher.matches()) {
+            arr[1] = arr[1].replace(matcher.group(), "");
+        }
+        //前面的处理之后，还需要针对几种特殊情况进行处理，包括：直接以“.”结尾(需改成0)、类似“123.”(需去掉小数点)、类似“.132”(需在最前面加上“0”)
+        if (arr[1].equals(".")) arr[1] = "0";
+        else if (arr[1].endsWith(".")) arr[1] = arr[1].substring(0, arr[1].length() - 1);
+        else if (arr[1].startsWith(".")) arr[1] = "0" + arr[1];
+        return arr;
+    }
+
+    /**
+     * 获取解析后的物品和价格所组成的数组
+     *
+     * @param str 输入的字符串
+     * @return 所求
+     */
     public static String[] getNameAndPrice(String str) {
         String[] arr = new String[2];
         String priceStr = "";
@@ -137,6 +184,15 @@ public class MyUtil {
         return arr;
     }
 
+    /**
+     * 设置总价值文本
+     *
+     * @param tvTotal   文本控件
+     * @param items     列表
+     * @param adapter   适配器
+     * @param list      物品集合
+     * @param preString 前缀字符串
+     */
     public static void setTotalText(TextView tvTotal, Items items, MultiTypeAdapter adapter, List<Thing> list, String preString) {
         if (tvTotal == null) return;
         float total = 0;
