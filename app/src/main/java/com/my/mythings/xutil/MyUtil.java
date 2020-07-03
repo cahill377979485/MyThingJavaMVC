@@ -133,14 +133,14 @@ public class MyUtil {
         String[] arr = new String[2];
         Pattern pattern = Pattern.compile("-?\\d*\\.?\\d*$");
         Matcher matcher = pattern.matcher(str);
-        if (matcher.matches()) {
+        if (matcher.matches()) {//matches()方法是全局匹配，find()是部分匹配，这里用任意一种都行
             arr[0] = str.replace(matcher.group(), "");
             arr[1] = matcher.group();
         }
         //价格只要是以.xx0 .x0 .0 .00结尾的都要做去除小数的处理
         pattern = Pattern.compile("\\.\\d*(0+)$");
         matcher = pattern.matcher(arr[1]);
-        if (matcher.matches()) {
+        if (matcher.matches()) {//matches()方法是全局匹配，find()是部分匹配，这里用任意一种都行
             arr[1] = arr[1].replace(matcher.group(), "");
         }
         //前面的处理之后，还需要针对几种特殊情况进行处理，包括：直接以“.”结尾(需改成0)、类似“123.”(需去掉小数点)、类似“.132”(需在最前面加上“0”)
