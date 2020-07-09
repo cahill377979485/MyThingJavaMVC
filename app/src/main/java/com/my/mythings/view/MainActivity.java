@@ -16,11 +16,13 @@ import android.widget.TextView;
 
 import com.my.mythings.R;
 import com.my.mythings.model.Thing;
+import com.my.mythings.xutil.Checker;
 import com.my.mythings.xutil.ToastUtils;
 import com.my.mythings.xutil.MyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,7 +67,16 @@ public class MainActivity extends AppCompatActivity {
                     String str = thing.getName() + thing.getPrice();
                     et.setText(str);
                     updating = true;
-                    updatePosition = thing.getPosition();
+                    updatePosition = -1;
+                    List<Thing> list = MyUtil.getThingList();
+                    if (Checker.hasList(list)) {
+                        for (int i = 0; i < list.size(); i++) {
+                            if (list.get(i).getName().toLowerCase(Locale.ROOT).equals(thing.getName().toLowerCase(Locale.ROOT))) {
+                                updatePosition = i;
+                                break;
+                            }
+                        }
+                    }
                     tvInput.setText("更新");
                     dialog.dismiss();
                 }).setPositiveButton("取消", null)
@@ -93,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     List<Thing> list = MyUtil.getThingList();
                     for (int i = 0; i < list.size(); i++) {
                         Thing t = list.get(i);
-                        if (t.getName().contains(s.toString()))
+                        if (t.getName().toLowerCase(Locale.ROOT).contains(s.toString().toLowerCase(Locale.ROOT)))
                             listResult.add(t);
                     }
                     MyUtil.setTotalText(tvTotal, items, adapter, listResult, "总价值小计");
@@ -117,10 +128,11 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 添加物品并保存
+     *
      * @param str 输入的字符串
      */
     private void addThing(String str) {
-        String[] arr = MyUtil.getNameAndPriceByRegex(str);
+        String[] arr = MyUtil.getNameAndPrice(str);
         List<Thing> list = MyUtil.getThingList();
         //检查是否已存在同名物品
         for (Thing t :
@@ -132,15 +144,13 @@ public class MainActivity extends AppCompatActivity {
         }
         list.add(0, new Thing(0, arr[0], arr[1]));
         MyUtil.save(list);
-        if (cbSearch.isChecked()) {
-            cbSearch.setChecked(false);
-        }
-        refreshData();
         et.setText("");
+        refreshData();
     }
 
     /**
      * 删除物品
+     *
      * @param name 物品名
      */
     private void deleteThing(String name) {
@@ -157,24 +167,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             MyUtil.save(list);
+            et.setText("");
             refreshData();
         }
     }
 
     /**
      * 更新物品
+     *
      * @param str 输入的字符串
      */
     private void updateThing(String str) {
-        String[] arr = MyUtil.getNameAndPriceByRegex(str);
+        if (updatePosition == -1) {//一般来说不会出现更新出错
+            ToastUtils.getInstance().showError("更新出错");
+            return;
+        }
+        String[] arr = MyUtil.getNameAndPrice(str);
         List<Thing> list = MyUtil.getThingList();
-        list.get(list.size() - 1 - updatePosition).setName(arr[0]);//因为是倒序所以这里要list.size-1-position
-        list.get(list.size() - 1 - updatePosition).setPrice(arr[1]);
+        list.get(updatePosition).setName(arr[0]);//因为是倒序所以这里要list.size-1-position
+        list.get(updatePosition).setPrice(arr[1]);
         MyUtil.save(list);
-        refreshData();
         tvInput.setText("录入");
         updating = false;
         et.setText("");
+        refreshData();
     }
 
     @OnClick({R.id.tv_input, R.id.iv_clear, R.id.cb_search})
