@@ -21,7 +21,7 @@ public class ExampleUnitTest {
 
     @Before
     public void init() {
-        arr = MyUtil.getNameAndPrice(input);
+        arr = MyUtil.getNameAndPriceByRegex(input);
     }
 
     private String input = "a1.100";
@@ -34,6 +34,6 @@ public class ExampleUnitTest {
 
     @Test
     public void getPrice() {
-        assertEquals("1.100", arr[1]);
+        assertEquals("1.1", arr[1]);
     }
 }

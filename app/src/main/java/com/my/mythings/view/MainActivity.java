@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
      * @param str 输入的字符串
      */
     private void addThing(String str) {
-        String[] arr = MyUtil.getNameAndPrice(str);
+        String[] arr = MyUtil.getNameAndPriceByRegex(str);
         List<Thing> list = MyUtil.getThingList();
         //检查是否已存在同名物品
         for (Thing t :
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             ToastUtils.getInstance().showError("更新出错");
             return;
         }
-        String[] arr = MyUtil.getNameAndPrice(str);
+        String[] arr = MyUtil.getNameAndPriceByRegex(str);
         List<Thing> list = MyUtil.getThingList();
         list.get(updatePosition).setName(arr[0]);//因为是倒序所以这里要list.size-1-position
         list.get(updatePosition).setPrice(arr[1]);
