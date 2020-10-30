@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.my.mythings.R;
 import com.my.mythings.xutil.ToastUtils;
 
@@ -43,36 +42,44 @@ public class DoorActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             listOri.add(i);
         }
+        //从0-9中挑出5个数字
         LinkedList<Integer> listNew1 = new LinkedList<>();
         for (int i = 0; i < 5; i++) {
             int r = random.nextInt(listOri.size());
             listNew1.add(listOri.get(r));
             listOri.remove(r);
         }
+        //用这五个数字组成一个五位数，0开头的话就是四位数了
         StringBuilder sb1 = new StringBuilder();
         for (int i = 0; i < listNew1.size(); i++) {
             sb1.append(listNew1.get(i));
         }
+        //用取出的5个数字，头尾相互调换顺序，得到另一个五位数数，0开头的话就是四位数了
         LinkedList<Integer> listNew2 = new LinkedList<>();
-        for (int i = 0; i < 5; i++) {
-            int r = random.nextInt(listNew1.size());
-            listNew2.add(listNew1.get(r));
-            listNew1.remove(r);
+        for (int i = 0; i < listNew1.size(); i++) {
+            listNew2.add(0,listNew1.get(i));
         }
+//        for (int i = 0; i < 5; i++) {//这个代码，随机性更高但是结果可能数字较少，不利于隐藏解法
+//            int r = random.nextInt(listNew1.size());
+//            listNew2.add(listNew1.get(r));
+//            listNew1.remove(r);
+//        }
         String str1 = sb1.toString();
         StringBuilder sb2 = new StringBuilder();
         for (int i = 0; i < listNew2.size(); i++) {
             sb2.append(listNew2.get(i));
         }
         String str2 = sb2.toString();
-        LogUtils.e("str1=" + str1);
-        LogUtils.e("str2=" + str2);
+//        LogUtils.e("str1=" + str1);
+//        LogUtils.e("str2=" + str2);
+        //得出差
         int num1 = Integer.parseInt(str1);
         int num2 = Integer.parseInt(str2);
         int delta = Math.abs(num1 - num2);
         String strDelta = String.valueOf(delta);
-        LogUtils.e("strDelta=" + strDelta);
+//        LogUtils.e("strDelta=" + strDelta);
         boolean success = false;
+        //从差中取第一个数字作为钥匙，如果是9则顺延，如果差中全是9，则通过递归的方式重新获取钥匙
         for (int i = 0; i < strDelta.length(); i++) {
             String k = strDelta.substring(i, i + 1);
             if (!k.equals("9")) {
@@ -90,7 +97,7 @@ public class DoorActivity extends AppCompatActivity {
     /**
      * 核验
      */
-    private void check() {
+    private void tryOpenTheDoor() {
         if (keyWord.equals(answerWord)) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -105,43 +112,43 @@ public class DoorActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.tv1:
                 answerWord = "1";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv2:
                 answerWord = "2";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv3:
                 answerWord = "3";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv4:
                 answerWord = "4";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv5:
                 answerWord = "5";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv6:
                 answerWord = "6";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv7:
                 answerWord = "7";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv8:
                 answerWord = "8";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv9:
                 answerWord = "9";
-                check();
+                tryOpenTheDoor();
                 break;
             case R.id.tv0:
                 answerWord = "0";
-                check();
+                tryOpenTheDoor();
                 break;
         }
     }
